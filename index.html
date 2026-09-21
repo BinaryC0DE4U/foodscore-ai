@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoodScore AI · Know what you eat</title>
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23163C2C'/%3E%3Cpath d='M32 14c9 0 15 7 15 16s-7 18-15 18-15-9-15-18 6-16 15-16z' fill='%234C9A63'/%3E%3Cpath d='M32 10c2 3 2 6-1 9' stroke='%23163C2C' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --ink: #122019;
+            --paper: #F3F1E6;
+            --paper-2: #EAE7D8;
+            --card: #FFFFFF;
+            --forest: #163C2C;
+            --forest-2: #0E2A1E;
+            --leaf: #4C9A63;
+            --leaf-light: #DCEEE0;
+            --tomato: #C4453A;
+            --tomato-light: #FBE6E2;
+            --citrus: #E0972E;
+            --citrus-light: #FBF0DC;
+            --muted: #6C7A6F;
+            --line: #DEDACA;
+            --shadow: 0 20px 50px rgba(18, 32, 25, .10), 0 4px 14px rgba(18, 32, 25, .06);
+            --radius: 22px;
+        }
+
+        [data-theme="dark"] {
+            --ink: #EDEEE7;
+            --paper: #0E1712;
+            --paper-2: #152019;
+            --card: #16211A;
+            --forest: #7ED19A;
+            --forest-2: #9FE3B7;
+            --leaf: #5FB57A;
+            --leaf-light: #173425;
+            --tomato: #E37367;
+            --tomato-light: #2E1917;
+            --citrus: #E7B15E;
+            --citrus-light: #2E260F;
+            --muted: #9AA79D;
+            --line: #26362C;
+            --shadow: 0 20px 50px rgba(0, 0, 0, .45), 0 4px 14px rgba(0, 0, 0, .3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            min-height: 100vh;
+            padding-bottom: 110px;
+            transition: background .3s ease, color .3s ease;
+        }
+
+        h1,
+        h2,
+        h3,
+        .display {
+            font-family: 'Fraunces', serif;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+
+        /* ============================================================
+   RESPONSIVE FIXES — all devices
+   ============================================================ */
+
+        /* Stop any horizontal scroll / overflow on any screen */
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: clip;
+        }
+
+        img,
+        video,
+        svg {
+            max-width: 100%;
+        }
+
+        .msg,
+        .ingredients-box,
+        .warn-item div,
+        .p-head h2,
+        .brand-name,
+        .tag,
+        .help-text {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        /* iOS Safari: stop auto-zoom when tapping an input */
+        @media (max-width: 768px) {
+
+            input,
+            select,
+            textarea {
+                font-size: 16px;
+            }
+        }
+
+        /* ---------- Tablets / small laptops ---------- */
+        @media (max-width: 640px) {
+            .hero {
+                padding: 26px 16px 4px;
+            }
+
+            .shell {
+                padding: 0 14px;
+                margin-top: 20px;
+            }
+
+            .card {
+                padding: 16px;
+                border-radius: 18px;
+            }
+
+            .panel {
+                width: min(420px, 94vw);
+            }
+
+            .chat-panel {
+                right: 14px;
+                bottom: 88px;
+            }
+
+            .product-img {
+                aspect-ratio: 1 / 1;
+            }
+        }
+
+        /* ---------- Phones ---------- */
+        @media (max-width: 480px) {
+            body {
+                padding-bottom: 96px;
+            }
+
+            .topbar {
+                padding: 11px 14px;
+            }
+
+            .brand-mark {
+                width: 34px;
+                height: 34px;
+                border-radius: 10px;
+            }
+
+            .brand-mark svg {
+                width: 19px;
+                height: 19px;
+            }
+
+            .brand-name {
+                font-size: 17px;
+            }
+
+            .icon-btn {
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
+            }
+
+            .hero {
+                padding: 22px 14px 2px;
+            }
+
+            .hero h1 {
+                font-size: clamp(23px, 7.2vw, 30px);
+                letter-spacing: -.3px;
+            }
+
+            .hero p {
+                font-size: 13.8px;
+                margin-top: 8px;
+            }
+
+            .seg button {
+                font-size: 12.5px;
+                padding: 9px 0;
+                gap: 5px;
+            }
+
+            .row-input input {
+                padding: 12px 15px;
+            }
+
+            .row-input .btn {
+                padding: 0 16px;
+                font-size: 13px;
+            }
+
+            .btn-block {
+                padding: 13px;
+            }
+
+            .p-head h2 {
+                font-size: 18px;
+            }
+
+            .p-head .brand {
+                font-size: 12.5px;
+            }
+
+            .listen-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+
+            .health-ring {
+                padding: 12px 14px;
+                gap: 12px;
+            }
+
+            .health-ring .ring {
+                width: 46px;
+                height: 46px;
+                font-size: 14px;
+            }
+
+            .health-ring .txt strong {
+                font-size: 13.5px;
+            }
+
+            .health-ring .txt span {
+                font-size: 11.5px;
+            }
+
+            .warn-box {
+                padding: 12px 14px;
+            }
+
+            .warn-item {
+                font-size: 13px;
+            }
+
+            .ingredients-box {
+                padding: 12px 14px;
+                font-size: 13px;
+                line-height: 1.6;
+            }
+
+            .section-title {
+                margin: 16px 0 7px;
+            }
+
+            table.nutri {
+                font-size: 12.5px;
+            }
+
+            table.nutri th,
+            table.nutri td {
+                padding: 7px 10px;
+            }
+
+            /* Chat takes the full width on phones */
+            .chat-panel {
+                left: 8px;
+                right: 8px;
+                bottom: 80px;
+                width: auto;
+                height: min(74vh, 540px);
+                border-radius: 20px;
+            }
+
+            .chat-fab {
+                width: 52px;
+                height: 52px;
+                font-size: 20px;
+                right: 14px;
+                bottom: 16px;
+            }
+
+            .chat-body {
+                padding: 12px;
+            }
+
+            .msg {
+                max-width: 88%;
+                font-size: 13px;
+            }
+
+            .chat-suggest {
+                padding: 0 12px 8px;
+            }
+
+            .chat-input-row {
+                padding: 10px;
+            }
+
+            footer {
+                margin-top: 28px;
+                font-size: 11.5px;
+                padding: 0 16px;
+            }
+        }
+
+        /* ---------- Very small phones (iPhone SE / 320px) ---------- */
+        @media (max-width: 380px) {
+            .hero h1 {
+                font-size: 22px;
+            }
+
+            .hero p {
+                font-size: 13px;
+            }
+
+            .seg button span {
+                display: none;
+            }
+
+            /* icon-only tab toggle */
+            .seg button i {
+                font-size: 15px;
+            }
+
+            #searchBtn span {
+                display: none;
+            }
+
+            /* icon-only search button */
+            #searchBtn {
+                padding: 0 18px;
+            }
+
+            .brand-name {
+                font-size: 15.5px;
+            }
+
+            .p-head h2 {
+                font-size: 16.5px;
+            }
+
+            .score-pill {
+                font-size: 12px;
+                padding: 5px 12px 5px 5px;
+            }
+
+            .score-pill .letter {
+                width: 23px;
+                height: 23px;
+                font-size: 12.5px;
+            }
+
+            .chat-panel {
+                height: min(78vh, 520px);
+            }
+        }
+
+        /* ---------- Landscape phones ---------- */
+        @media (max-height: 520px) and (orientation: landscape) {
+            .chat-panel {
+                height: calc(100vh - 100px);
+                bottom: 70px;
+            }
+
+            .chat-fab {
+                bottom: 12px;
+            }
+
+            .hero {
+                padding-top: 16px;
+            }
+        }
+
+        /* ---------- iPhone notch / safe areas ---------- */
+        @supports (padding: max(0px)) {
+            .topbar {
+                padding-top: max(11px, env(safe-area-inset-top));
+            }
+
+            .chat-fab {
+                bottom: max(16px, env(safe-area-inset-bottom));
+            }
+
+            .chat-input-row {
+                padding-bottom: max(10px, env(safe-area-inset-bottom));
+            }
+
+            body {
+                padding-bottom: calc(96px + env(safe-area-inset-bottom));
+            }
+        }
+
+        /* ---------- Touch devices: kill hover jumpiness ---------- */
+        @media (hover: none) {
+            .btn-forest:hover {
+                transform: none;
+            }
+
+            .chat-fab:hover {
+                transform: none;
+            }
+
+            .icon-btn:hover {
+                border-color: var(--line);
+                color: var(--ink);
+            }
+        }
+
+        /* ---------- Respect reduced-motion preference ---------- */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: .001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* ===== TOPBAR ===== */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            background: color-mix(in srgb, var(--paper) 88%, transparent);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .brand-mark {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: linear-gradient(155deg, var(--forest), var(--leaf));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 6px 16px rgba(22, 60, 44, .28);
+        }
+
+        .brand-mark svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .brand-name {
+            font-family: 'Fraunces', serif;
+            font-weight: 600;
+            font-size: 19px;
+            letter-spacing: -.2px;
+        }
+
+        .brand-name em {
+            font-style: normal;
+            color: var(--leaf);
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+            background: var(--card);
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+            transition: .2s;
+        }
+
+        .icon-btn:hover {
+            border-color: var(--leaf);
+            color: var(--forest);
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 34px 20px 6px;
+            text-align: center;
+        }
+
+        .hero .eyebrow-free {
+            color: var(--muted);
+            font-size: 13.5px;
+            margin-bottom: 6px;
+        }
+
+        .hero h1 {
+            font-size: clamp(28px, 6vw, 38px);
+            font-weight: 600;
+            line-height: 1.12;
+            letter-spacing: -.5px;
+        }
+
+        .hero h1 .hl {
+            color: var(--leaf);
+        }
+
+        .hero p {
+            color: var(--muted);
+            font-size: 15px;
+            margin-top: 10px;
+            max-width: 440px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ===== SHELL ===== */
+        .shell {
+            max-width: 640px;
+            margin: 26px auto 0;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--line);
+        }
+
+        .seg {
+            display: flex;
+            background: var(--paper-2);
+            border-radius: 100px;
+            padding: 4px;
+            margin-bottom: 16px;
+        }
+
+        .seg button {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 10px 0;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 13.5px;
+            color: var(--muted);
+            cursor: pointer;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        .seg button.active {
+            background: var(--card);
+            color: var(--forest);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+        }
+
+        .row-input {
+            display: flex;
+            gap: 8px;
+        }
+
+        .row-input input {
+            flex: 1;
+            padding: 14px 18px;
+            border-radius: 100px;
+            border: 1.5px solid var(--line);
+            background: var(--paper);
+            color: var(--ink);
+            font-size: 14.5px;
+            outline: none;
+            transition: .2s;
+        }
+
+        .row-input input:focus {
+            border-color: var(--leaf);
+            box-shadow: 0 0 0 4px var(--leaf-light);
+        }
+
+        .btn {
+            border: none;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 0 22px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: .2s;
+            white-space: nowrap;
+        }
+
+        .btn-forest {
+            background: var(--forest);
+            color: #fff;
+        }
+
+        .btn-forest:hover {
+            background: var(--forest-2);
+            transform: translateY(-1px);
+        }
+
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+            padding: 14px;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1.5px solid var(--line);
+            color: var(--ink);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--leaf);
+            color: var(--forest);
+        }
+
+        .btn-danger {
+            background: var(--tomato);
+            color: #fff;
+        }
+
+        #cameraWrap {
+            display: none;
+            margin-top: 14px;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #0a1410;
+            position: relative;
+        }
+
+        #cameraWrap video {
+            width: 100%;
+            display: block;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+        }
+
+        #cameraWrap .frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 72%;
+            height: 34%;
+            border: 3px dashed rgba(255, 255, 255, .5);
+            border-radius: 16px;
+            pointer-events: none;
+        }
+
+        .scan-status {
+            display: none;
+            margin-top: 10px;
+            text-align: center;
+            background: var(--forest);
+            color: #fff;
+            padding: 9px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .scan-status.on {
+            display: block;
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .55
+            }
+        }
+
+        .cam-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .cam-actions .btn {
+            flex: 1;
+        }
+
+        .hint {
+            font-size: 12.5px;
+            color: var(--muted);
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ===== RESULT ===== */
+        #result {
+            margin-top: 22px;
+            display: none;
+            animation: fadeUp .35s ease;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .product-img {
+            width: 100%;
+            aspect-ratio: 4/3;
+            border-radius: 18px;
+            overflow: hidden;
+            background: var(--paper-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            border: 1px solid var(--line);
+        }
+
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #fff;
+        }
+
+        .product-img .noimg {
+            font-size: 34px;
+            color: var(--muted);
+            opacity: .5;
+        }
+
+        .p-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 14px;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .p-head h2 {
+            font-size: 21px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .p-head .brand {
+            color: var(--muted);
+            font-size: 13.5px;
+            margin-top: 2px;
+        }
+
+        .listen-btn {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1.5px solid var(--line);
+            background: var(--paper);
+            color: var(--forest);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+            transition: .2s;
+        }
+
+        .listen-btn:hover {
+            background: var(--leaf-light);
+            border-color: var(--leaf);
+        }
+
+        .listen-btn.speaking {
+            background: var(--leaf);
+            color: #fff;
+            border-color: var(--leaf);
+        }
+
+        .score-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .score-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--paper-2);
+            border-radius: 100px;
+            padding: 6px 14px 6px 6px;
+            font-weight: 700;
+            font-size: 13.5px;
+        }
+
+        .score-pill .letter {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .A {
+            background: #1F8B4C;
+        }
+
+        .B {
+            background: #86BB3A;
+        }
+
+        .C {
+            background: var(--citrus);
+        }
+
+        .D {
+            background: #ED7D31;
+        }
+
+        .E {
+            background: var(--tomato);
+        }
+
+        .Q {
+            background: var(--muted);
+        }
+
+        .health-ring {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: var(--paper-2);
+            margin-bottom: 16px;
+        }
+
+        .health-ring .ring {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 15px;
+            color: #fff;
+        }
+
+        .health-ring .txt strong {
+            display: block;
+            font-size: 14.5px;
+        }
+
+        .health-ring .txt span {
+            font-size: 12.5px;
+            color: var(--muted);
+        }
+
+        .warn-box {
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--tomato);
+            background: var(--tomato-light);
+        }
+
+        .warn-box.safe {
+            border-left-color: var(--leaf);
+            background: var(--leaf-light);
+        }
+
+        .warn-box .wt {
+            font-size: 11.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            color: var(--tomato);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 6px;
+        }
+
+        .warn-box.safe .wt {
+            color: var(--forest);
+        }
+
+        .warn-item {
+            font-size: 13.5px;
+            padding: 3px 0;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .warn-item .code {
+            background: var(--tomato);
+            color: #fff;
+            font-size: 9.5px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 100px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .warn-item .concern {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .section-title {
+            font-size: 12.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--muted);
+            margin: 18px 0 8px;
+        }
+
+        .ingredients-box {
+            background: var(--paper-2);
+            border-radius: 14px;
+            padding: 14px 16px;
+            font-size: 13.5px;
+            line-height: 1.65;
+        }
+
+        .ingredients-box mark {
+            background: var(--tomato-light);
+            color: var(--tomato);
+            border-radius: 5px;
+            padding: 0 3px;
+            font-weight: 600;
+        }
+
+        table.nutri {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+            font-size: 13.5px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        table.nutri thead {
+            background: var(--forest);
+            color: #fff;
+        }
+
+        table.nutri th {
+            padding: 9px 12px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+
+        table.nutri td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        table.nutri td:last-child {
+            text-align: right;
+            font-weight: 700;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: var(--paper-2);
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 11.5px;
+            font-weight: 600;
+        }
+
+        .tag.veg {
+            background: var(--leaf-light);
+            color: var(--forest);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 34px 10px;
+            color: var(--muted);
+        }
+
+        .empty-state i {
+            font-size: 34px;
+            color: var(--leaf);
+            margin-bottom: 10px;
+        }
+
+        /* ===== SETTINGS PANEL ===== */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 16, 12, .5);
+            z-index: 200;
+            display: none;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        .panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: min(400px, 92vw);
+            background: var(--card);
+            z-index: 201;
+            box-shadow: -20px 0 50px rgba(0, 0, 0, .2);
+            transform: translateX(100%);
+            transition: transform .3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel.show {
+            transform: translateX(0);
+        }
+
+        .panel-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .panel-head h3 {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .panel-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .field-label {
+            font-size: 12.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            color: var(--muted);
+            margin: 18px 0 8px;
+        }
+
+        .field-label:first-child {
+            margin-top: 0;
+        }
+
+        select,
+        .panel input[type=text],
+        .panel input[type=password] {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1.5px solid var(--line);
+            background: var(--paper);
+            color: var(--ink);
+            font-size: 14px;
+            outline: none;
+        }
+
+        select:focus,
+        .panel input:focus {
+            border-color: var(--leaf);
+        }
+
+        .theme-switch {
+            display: flex;
+            gap: 8px;
+        }
+
+        .theme-switch button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1.5px solid var(--line);
+            background: var(--paper);
+            color: var(--ink);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .theme-switch button.active {
+            border-color: var(--leaf);
+            background: var(--leaf-light);
+            color: var(--forest);
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+
+        .help-text a {
+            color: var(--leaf);
+            text-decoration: underline;
+        }
+
+        .key-status {
+            font-size: 12.5px;
+            margin-top: 8px;
+            padding: 8px 10px;
+            border-radius: 10px;
+        }
+
+        .key-status.ok {
+            background: var(--leaf-light);
+            color: var(--forest);
+        }
+
+        .key-status.off {
+            background: var(--paper-2);
+            color: var(--muted);
+        }
+
+        /* ===== CHAT ===== */
+        .chat-fab {
+            position: fixed;
+            bottom: 22px;
+            right: 22px;
+            z-index: 150;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: linear-gradient(155deg, var(--forest), var(--leaf));
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 26px rgba(22, 60, 44, .35);
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: .2s;
+        }
+
+        .chat-fab:hover {
+            transform: scale(1.06);
+        }
+
+        .chat-fab .dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 11px;
+            height: 11px;
+            background: var(--tomato);
+            border-radius: 50%;
+            border: 2px solid var(--card);
+        }
+
+        .chat-panel {
+            position: fixed;
+            bottom: 96px;
+            right: 22px;
+            z-index: 150;
+            width: min(380px, 92vw);
+            height: min(560px, 70vh);
+            background: var(--card);
+            border-radius: 24px;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, .25);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--line);
+        }
+
+        .chat-panel.show {
+            display: flex;
+        }
+
+        .chat-head {
+            background: linear-gradient(155deg, var(--forest), var(--forest-2));
+            color: #fff;
+            padding: 16px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-head .t strong {
+            display: block;
+            font-size: 14.5px;
+        }
+
+        .chat-head .t span {
+            font-size: 11.5px;
+            opacity: .8;
+        }
+
+        .chat-head button {
+            background: rgba(255, 255, 255, .15);
+            border: none;
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .chat-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: var(--paper);
+        }
+
+        .msg {
+            max-width: 82%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 13.5px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .msg.bot {
+            background: var(--card);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+        }
+
+        .msg.user {
+            background: var(--forest);
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .typing {
+            display: flex;
+            gap: 4px;
+            padding: 12px 14px;
+            background: var(--card);
+            border-radius: 16px;
+            align-self: flex-start;
+            width: fit-content;
+        }
+
+        .typing span {
+            width: 6px;
+            height: 6px;
+            background: var(--muted);
+            border-radius: 50%;
+            animation: tb 1.2s infinite;
+        }
+
+        .typing span:nth-child(2) {
+            animation-delay: .2s
+        }
+
+        .typing span:nth-child(3) {
+            animation-delay: .4s
+        }
+
+        @keyframes tb {
+
+            0%,
+            60%,
+            100% {
+                opacity: .3
+            }
+
+            30% {
+                opacity: 1
+            }
+        }
+
+        .chat-suggest {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 0 16px 10px;
+        }
+
+        .chat-suggest button {
+            background: var(--paper-2);
+            border: none;
+            border-radius: 100px;
+            padding: 6px 12px;
+            font-size: 11.5px;
+            color: var(--forest);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            border-top: 1px solid var(--line);
+            background: var(--card);
+        }
+
+        .chat-input-row input {
+            flex: 1;
+            padding: 11px 14px;
+            border-radius: 100px;
+            border: 1.5px solid var(--line);
+            background: var(--paper);
+            color: var(--ink);
+            font-size: 13.5px;
+            outline: none;
+        }
+
+        .chat-input-row button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--forest);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        /* Hide the AI key section from visitors */
+        #aiSettingsBlock {
+            display: none !important;
+        }
+
+        footer {
+            max-width: 640px;
+            margin: 36px auto 0;
+            padding: 0 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        @media(max-width:420px) {
+            .chat-panel {
+                right: 10px;
+                left: 10px;
+                width: auto;
+                bottom: 90px;
+            }
+
+            .chat-fab {
+                right: 16px;
+            }
+        }
+
+        /* Quagga injects video + canvas into #cameraWrap */
+        #cameraWrap video,
+        #cameraWrap canvas {
+            width: 100% !important;
+            height: auto !important;
+            display: block;
+        }
+
+        #cameraWrap canvas.drawingBuffer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="topbar">
+        <a class="brand" href="#">
+            <span class="brand-mark">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3c5 0 8 4 8 9s-4 10-8 10-8-5-8-10 3-9 8-9z" fill="#fff" />
+                    <path d="M12 1c1.2 1.7 1.2 3.3-.5 5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" />
+                </svg>
+            </span>
+            <span class="brand-name">FoodScore <em>AI</em></span>
+        </a>
+        <div class="top-actions">
+            <button class="icon-btn" id="settingsBtn" title="Settings"><i class="fa-solid fa-sliders"></i></button>
+        </div>
+    </div>
+
+    <div class="hero">
+        <div class="eyebrow-free" data-i18n="poweredBy">Powered by Open Food Facts</div>
+        <h1 data-i18n="heroTitle">Scan it before you <span class="hl">eat it</span></h1>
+        <p data-i18n="heroSub">Check additives, allergens and nutrition in seconds — then ask the AI anything about
+            what's in your food.</p>
+    </div>
+
+    <div class="shell">
+        <div class="card">
+            <div class="seg">
+                <button class="active" data-mode="manual"><i class="fa-solid fa-keyboard"></i> <span
+                        data-i18n="manual">Type barcode</span></button>
+                <button data-mode="scan"><i class="fa-solid fa-camera"></i> <span data-i18n="scan">Scan
+                        camera</span></button>
+            </div>
+
+            <div id="manualArea">
+                <div class="row-input">
+                    <input id="barcodeInput" type="text" inputmode="numeric" data-i18n-placeholder="placeholderBarcode"
+                        placeholder="e.g. 3017620422003" />
+                    <button class="btn btn-forest" id="searchBtn"><i class="fa-solid fa-magnifying-glass"></i> <span
+                            data-i18n="search">Search</span></button>
+                </div>
+                <div class="hint" data-i18n="hintManual">Find the barcode on the back or bottom of the package.</div>
+            </div>
+
+            <div id="scanArea" class="hidden">
+                <button class="btn btn-forest btn-block" id="startScanBtn"><i class="fa-solid fa-camera"></i> <span
+                        data-i18n="startCamera">Start camera</span></button>
+                <div id="cameraWrap">
+                    <!-- Quagga injects its own <video> + <canvas> here -->
+                    <div class="frame"></div>
+                </div>
+                <div class="scan-status" id="scanStatus"><i class="fa-solid fa-barcode"></i> <span
+                        data-i18n="scanning">Scanning for barcode…</span></div>
+                <div class="cam-actions hidden" id="camActions">
+                    <button class="btn btn-danger" id="stopScanBtn"><i class="fa-solid fa-stop"></i> <span
+                            data-i18n="stop">Stop</span></button>
+                </div>
+                <div class="hint" data-i18n="hintScan">Hold the barcode steady inside the frame.</div>
+            </div>
+
+            <div id="result">
+                <div id="productCard"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer data-i18n="footer">Nutrition data from Open Food Facts, the free open database of food products.</footer>
+
+    <!-- ===== SETTINGS PANEL ===== -->
+    <div class="overlay" id="overlay"></div>
+    <div class="panel" id="settingsPanel">
+        <div class="panel-head">
+            <h3 data-i18n="settingsTitle">Settings</h3>
+            <button class="icon-btn" id="closeSettings"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="panel-body">
+            <div class="field-label" data-i18n="language">Language</div>
+            <select id="langSelect"></select>
+
+            <div class="field-label" data-i18n="appearance">Appearance</div>
+            <div class="theme-switch">
+                <button data-theme-choice="light"><i class="fa-solid fa-sun"></i> <span
+                        data-i18n="light">Light</span></button>
+                <button data-theme-choice="dark"><i class="fa-solid fa-moon"></i> <span
+                        data-i18n="dark">Dark</span></button>
+            </div>
+
+            <div id="aiSettingsBlock">
+                <div class="field-label" data-i18n="aiSection">Real AI assistant</div>
+                <div class="help-text" data-i18n="aiHelp">
+                    FoodScore AI's chatbot works offline with basic rules. To unlock a real conversational AI (in any
+                    language), add a free Google Gemini API key — it stays on your device only.
+                </div>
+                <input type="password" id="apiKeyInput" placeholder="AIzaSy..." style="margin-top:10px;" />
+                <div style="display:flex;gap:8px;margin-top:10px;">
+                    <button class="btn btn-forest" id="saveKeyBtn" style="flex:1;justify-content:center;"><span
+                            data-i18n="save">Save</span></button>
+                    <button class="btn btn-ghost" id="clearKeyBtn"><span data-i18n="clear">Clear</span></button>
+                </div>
+                <div class="key-status off" id="keyStatus" data-i18n="keyOff">No key saved — using offline assistant.
+                </div>
+                <div class="help-text">
+                    <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" data-i18n="getKey">Get a
+                        free key at Google AI Studio →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CHAT ===== -->
+    <button class="chat-fab" id="chatFab"><i class="fa-solid fa-comment-dots"></i><span class="dot"
+            id="chatDot"></span></button>
+    <div class="chat-panel" id="chatPanel">
+        <div class="chat-head">
+            <div class="t"><strong data-i18n="chatTitle">Food Assistant</strong><span id="chatModeLabel"
+                    data-i18n="chatOffline">Offline mode</span></div>
+            <button id="chatClose"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="chat-body" id="chatBody"></div>
+        <div class="chat-suggest" id="chatSuggest"></div>
+        <div class="chat-input-row">
+            <input id="chatInput" type="text" data-i18n-placeholder="chatPlaceholder"
+                placeholder="Ask about this product…" />
+            <button id="chatSend"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <script>
+        (function () {
+
+            /* ============================================================
+               1. I18N
+               ============================================================ */
+            const LANGS = [
+                { code: 'en', name: 'English', bcp: 'en-US' },
+                { code: 'es', name: 'Español', bcp: 'es-ES' },
+                { code: 'fr', name: 'Français', bcp: 'fr-FR' },
+                { code: 'de', name: 'Deutsch', bcp: 'de-DE' },
+                { code: 'pt', name: 'Português', bcp: 'pt-BR' },
+                { code: 'hi', name: 'हिन्दी', bcp: 'hi-IN' },
+                { code: 'ar', name: 'العربية', bcp: 'ar-SA' },
+                { code: 'zh', name: '中文', bcp: 'zh-CN' },
+                { code: 'ja', name: '日本語', bcp: 'ja-JP' },
+                { code: 'ru', name: 'Русский', bcp: 'ru-RU' },
+            ];
+
+            const I18N = {
+                poweredBy: { en: 'Powered by Open Food Facts', es: 'Con datos de Open Food Facts', fr: 'Propulsé par Open Food Facts', de: 'Unterstützt von Open Food Facts', pt: 'Com dados do Open Food Facts', hi: 'Open Food Facts द्वारा संचालित', ar: 'مدعوم من Open Food Facts', zh: '由 Open Food Facts 提供支持', ja: 'Open Food Facts 提供', ru: 'На основе Open Food Facts' },
+                heroTitle: { en: 'Scan it before you {hl}eat it{/hl}', es: 'Escanéalo antes de {hl}comerlo{/hl}', fr: 'Scannez-le avant de le {hl}manger{/hl}', de: 'Scanne es, bevor du es {hl}isst{/hl}', pt: 'Escaneie antes de {hl}comer{/hl}', hi: 'खाने से पहले इसे {hl}स्कैन करें{/hl}', ar: 'امسحه ضوئيًا قبل أن {hl}تأكله{/hl}', zh: '吃之前先{hl}扫一扫{/hl}', ja: '食べる前に{hl}スキャン{/hl}しよう', ru: 'Сканируй, прежде чем {hl}съесть{/hl}' },
+                heroSub: { en: "Check additives, allergens and nutrition in seconds — then ask the AI anything about what's in your food.", es: 'Revisa aditivos, alérgenos y nutrición en segundos, luego pregúntale a la IA lo que quieras.', fr: 'Vérifiez additifs, allergènes et nutrition en quelques secondes, puis posez vos questions à l’IA.', de: 'Prüfe Zusatzstoffe, Allergene und Nährwerte in Sekunden — und frag die KI alles dazu.', pt: 'Verifique aditivos, alérgenos e nutrição em segundos e pergunte à IA o que quiser.', hi: 'सेकंडों में एडिटिव्स, एलर्जन और पोषण जांचें — फिर AI से कुछ भी पूछें।', ar: 'تحقّق من المضافات ومسببات الحساسية والتغذية خلال ثوانٍ، ثم اسأل الذكاء الاصطناعي أي شيء.', zh: '几秒钟内查看添加剂、过敏原和营养成分，然后向 AI 提问。', ja: '数秒で添加物・アレルゲン・栄養をチェック。AIに何でも聞けます。', ru: 'Проверьте добавки, аллергены и питание за секунды — затем спросите ИИ о чём угодно.' },
+                manual: { en: 'Type barcode', es: 'Escribir código', fr: 'Saisir le code', de: 'Barcode eingeben', pt: 'Digitar código', hi: 'बारकोड टाइप करें', ar: 'اكتب الباركود', zh: '输入条码', ja: 'バーコード入力', ru: 'Ввести штрихкод' },
+                scan: { en: 'Scan camera', es: 'Usar cámara', fr: 'Scanner', de: 'Kamera scannen', pt: 'Usar câmera', hi: 'कैमरे से स्कैन करें', ar: 'المسح بالكاميرا', zh: '扫描相机', ja: 'カメラでスキャン', ru: 'Сканировать камерой' },
+                placeholderBarcode: { en: 'e.g. 3017620422003', es: 'ej. 3017620422003', fr: 'ex. 3017620422003', de: 'z. B. 3017620422003', pt: 'ex. 3017620422003', hi: 'जैसे 3017620422003', ar: 'مثال 3017620422003', zh: '例如 3017620422003', ja: '例：3017620422003', ru: 'напр. 3017620422003' },
+                search: { en: 'Search', es: 'Buscar', fr: 'Rechercher', de: 'Suchen', pt: 'Buscar', hi: 'खोजें', ar: 'بحث', zh: '搜索', ja: '検索', ru: 'Поиск' },
+                hintManual: { en: 'Find the barcode on the back or bottom of the package.', es: 'Busca el código de barras en el paquete.', fr: 'Trouvez le code-barres au dos de l’emballage.', de: 'Finde den Barcode auf der Verpackung.', pt: 'Encontre o código de barras na embalagem.', hi: 'पैकेज पर बारकोड ढूंढें।', ar: 'ابحث عن الباركود على العبوة.', zh: '在包装背面或底部找到条形码。', ja: 'パッケージ裏面のバーコードを探してください。', ru: 'Найдите штрихкод на упаковке.' },
+                startCamera: { en: 'Start camera', es: 'Iniciar cámara', fr: 'Démarrer la caméra', de: 'Kamera starten', pt: 'Iniciar câmera', hi: 'कैमरा शुरू करें', ar: 'تشغيل الكاميرا', zh: '启动相机', ja: 'カメラを開始', ru: 'Запустить камеру' },
+                scanning: { en: 'Scanning for barcode…', es: 'Buscando código…', fr: 'Recherche du code…', de: 'Suche nach Barcode…', pt: 'Procurando código…', hi: 'बारकोड खोजा जा रहा है…', ar: 'جارٍ البحث عن الباركود…', zh: '正在扫描条码…', ja: 'バーコードをスキャン中…', ru: 'Поиск штрихкода…' },
+                stop: { en: 'Stop', es: 'Detener', fr: 'Arrêter', de: 'Stopp', pt: 'Parar', hi: 'रोकें', ar: 'إيقاف', zh: '停止', ja: '停止', ru: 'Стоп' },
+                hintScan: { en: 'Hold the barcode steady inside the frame.', es: 'Mantén el código dentro del marco.', fr: 'Maintenez le code dans le cadre.', de: 'Halte den Barcode im Rahmen.', pt: 'Mantenha o código dentro do quadro.', hi: 'बारकोड को फ्रेम में स्थिर रखें।', ar: 'أبقِ الباركود ثابتًا داخل الإطار.', zh: '将条码保持在取景框内。', ja: '枠内でバーコードを静止させてください。', ru: 'Держите штрихкод в рамке.' },
+                footer: { en: 'Nutrition data from Open Food Facts, the free open database of food products.', es: 'Datos nutricionales de Open Food Facts.', fr: 'Données nutritionnelles fournies par Open Food Facts.', de: 'Nährwertdaten von Open Food Facts.', pt: 'Dados nutricionais do Open Food Facts.', hi: 'पोषण डेटा Open Food Facts से।', ar: 'بيانات التغذية من Open Food Facts.', zh: '营养数据来自 Open Food Facts。', ja: '栄養データは Open Food Facts より。', ru: 'Данные о питании от Open Food Facts.' },
+                settingsTitle: { en: 'Settings', es: 'Ajustes', fr: 'Paramètres', de: 'Einstellungen', pt: 'Configurações', hi: 'सेटिंग्स', ar: 'الإعدادات', zh: '设置', ja: '設定', ru: 'Настройки' },
+                language: { en: 'Language', es: 'Idioma', fr: 'Langue', de: 'Sprache', pt: 'Idioma', hi: 'भाषा', ar: 'اللغة', zh: '语言', ja: '言語', ru: 'Язык' },
+                appearance: { en: 'Appearance', es: 'Apariencia', fr: 'Apparence', de: 'Erscheinungsbild', pt: 'Aparência', hi: 'दिखावट', ar: 'المظهر', zh: '外观', ja: '外観', ru: 'Оформление' },
+                light: { en: 'Light', es: 'Claro', fr: 'Clair', de: 'Hell', pt: 'Claro', hi: 'हल्का', ar: 'فاتح', zh: '浅色', ja: 'ライト', ru: 'Светлая' },
+                dark: { en: 'Dark', es: 'Oscuro', fr: 'Sombre', de: 'Dunkel', pt: 'Escuro', hi: 'गहरा', ar: 'داكن', zh: '深色', ja: 'ダーク', ru: 'Тёмная' },
+                aiSection: { en: 'Real AI assistant', es: 'Asistente de IA real', fr: 'Assistant IA réel', de: 'Echter KI-Assistent', pt: 'Assistente de IA real', hi: 'वास्तविक AI सहायक', ar: 'مساعد ذكاء اصطناعي حقيقي', zh: '真实 AI 助手', ja: '本物のAIアシスタント', ru: 'Настоящий ИИ-ассистент' },
+                aiHelp: { en: "FoodScore AI's chatbot works offline with basic rules. To unlock a real conversational AI (in any language), add a free Google Gemini API key — it stays on your device only.", es: 'El chatbot funciona sin conexión. Para una IA real, añade una clave gratuita de Google Gemini — se guarda solo en tu dispositivo.', fr: 'Le chatbot fonctionne hors ligne. Pour une vraie IA, ajoutez une clé Google Gemini gratuite — conservée uniquement sur votre appareil.', de: 'Der Chatbot funktioniert offline. Für echte KI füge einen kostenlosen Google-Gemini-Schlüssel hinzu — er bleibt nur auf deinem Gerät.', pt: 'O chatbot funciona offline. Para uma IA real, adicione uma chave gratuita do Google Gemini — fica só no seu dispositivo.', hi: 'चैटबॉट ऑफ़लाइन काम करता है। असली AI के लिए मुफ़्त Google Gemini कुंजी जोड़ें — यह केवल आपके डिवाइस पर रहती है।', ar: 'يعمل روبوت الدردشة دون اتصال. لإضافة ذكاء اصطناعي حقيقي أضف مفتاح Google Gemini مجاني — يبقى على جهازك فقط.', zh: '聊天机器人可离线使用基本规则。要解锁真正的对话式 AI，请添加免费的 Google Gemini API 密钥——仅保存在您的设备上。', ja: 'チャットボットはオフラインでも動作します。本物のAIを使うには無料のGoogle Gemini APIキーを追加してください（端末にのみ保存されます）。', ru: 'Чат-бот работает офлайн по простым правилам. Чтобы включить настоящий ИИ, добавьте бесплатный ключ Google Gemini — он хранится только на вашем устройстве.' },
+                save: { en: 'Save', es: 'Guardar', fr: 'Enregistrer', de: 'Speichern', pt: 'Salvar', hi: 'सहेजें', ar: 'حفظ', zh: '保存', ja: '保存', ru: 'Сохранить' },
+                clear: { en: 'Clear', es: 'Borrar', fr: 'Effacer', de: 'Löschen', pt: 'Limpar', hi: 'हटाएं', ar: 'مسح', zh: '清除', ja: 'クリア', ru: 'Очистить' },
+                keyOff: { en: 'No key saved — using offline assistant.', es: 'Sin clave — usando modo sin conexión.', fr: 'Aucune clé — mode hors ligne.', de: 'Kein Schlüssel — Offline-Modus.', pt: 'Sem chave — modo offline.', hi: 'कोई कुंजी नहीं — ऑफ़लाइन मोड।', ar: 'لا يوجد مفتاح — الوضع دون اتصال.', zh: '未保存密钥 — 使用离线助手。', ja: 'キー未設定 — オフラインモード。', ru: 'Ключ не сохранён — офлайн режим.' },
+                keyOn: { en: 'Real AI connected ✓', es: 'IA real conectada ✓', fr: 'IA réelle connectée ✓', de: 'Echte KI verbunden ✓', pt: 'IA real conectada ✓', hi: 'वास्तविक AI जुड़ा ✓', ar: 'تم توصيل الذكاء الاصطناعي ✓', zh: '真实 AI 已连接 ✓', ja: '本物のAIに接続済み ✓', ru: 'Настоящий ИИ подключён ✓' },
+                getKey: { en: 'Get a free key at Google AI Studio →', es: 'Obtén una clave gratis en Google AI Studio →', fr: 'Obtenez une clé gratuite sur Google AI Studio →', de: 'Kostenlosen Schlüssel bei Google AI Studio holen →', pt: 'Obtenha uma chave grátis no Google AI Studio →', hi: 'Google AI Studio पर मुफ़्त कुंजी लें →', ar: 'احصل على مفتاح مجاني من Google AI Studio →', zh: '在 Google AI Studio 获取免费密钥 →', ja: 'Google AI Studioで無料キーを取得 →', ru: 'Получите бесплатный ключ в Google AI Studio →' },
+                chatTitle: { en: 'Food Assistant', es: 'Asistente de comida', fr: 'Assistant alimentaire', de: 'Ernährungsassistent', pt: 'Assistente alimentar', hi: 'खाद्य सहायक', ar: 'مساعد الطعام', zh: '食品助手', ja: 'フードアシスタント', ru: 'Помощник по еде' },
+                chatOffline: { en: 'Offline mode', es: 'Modo sin conexión', fr: 'Mode hors ligne', de: 'Offline-Modus', pt: 'Modo offline', hi: 'ऑफ़लाइन मोड', ar: 'وضع عدم الاتصال', zh: '离线模式', ja: 'オフラインモード', ru: 'Офлайн режим' },
+                chatOnline: { en: 'AI connected', es: 'IA conectada', fr: 'IA connectée', de: 'KI verbunden', pt: 'IA conectada', hi: 'AI जुड़ा हुआ', ar: 'الذكاء الاصطناعي متصل', zh: 'AI 已连接', ja: 'AI接続済み', ru: 'ИИ подключён' },
+                chatPlaceholder: { en: 'Ask about this product…', es: 'Pregunta sobre este producto…', fr: 'Posez une question…', de: 'Frag etwas zum Produkt…', pt: 'Pergunte sobre o produto…', hi: 'इस उत्पाद के बारे में पूछें…', ar: 'اسأل عن هذا المنتج…', zh: '询问该产品…', ja: 'この商品について質問…', ru: 'Спросите об этом продукте…' },
+                chatIntro: { en: "Hi! Scan or search a product and I'll help you understand what's in it — additives, allergens, nutrition, anything.", es: '¡Hola! Escanea un producto y te ayudo con aditivos, alérgenos y nutrición.', fr: 'Bonjour ! Scannez un produit et je vous aide avec additifs, allergènes et nutrition.', de: 'Hallo! Scanne ein Produkt und ich helfe dir mit Zusatzstoffen, Allergenen und Nährwerten.', pt: 'Oi! Escaneie um produto e eu ajudo com aditivos, alérgenos e nutrição.', hi: 'नमस्ते! कोई उत्पाद स्कैन करें और मैं मदद करूंगा।', ar: 'مرحبًا! امسح منتجًا وسأساعدك في فهم مكوناته.', zh: '你好！扫描一个产品，我来帮你了解添加剂、过敏原和营养信息。', ja: 'こんにちは！商品をスキャンすると、添加物やアレルゲン、栄養について説明します。', ru: 'Привет! Отсканируйте продукт, и я помогу разобраться в составе.' },
+                askHealthy: { en: 'Is this healthy?', es: '¿Es saludable?', fr: 'Est-ce sain ?', de: 'Ist das gesund?', pt: 'Isso é saudável?', hi: 'क्या यह स्वस्थ है?', ar: 'هل هذا صحي؟', zh: '这健康吗？', ja: 'これは健康的？', ru: 'Это полезно?' },
+                askAdditives: { en: 'Any harmful additives?', es: '¿Aditivos dañinos?', fr: 'Additifs nocifs ?', de: 'Schädliche Zusatzstoffe?', pt: 'Aditivos prejudiciais?', hi: 'हानिकारक एडिटिव्स?', ar: 'مضافات ضارة؟', zh: '有害添加剂？', ja: '有害な添加物は？', ru: 'Вредные добавки?' },
+                askVegan: { en: 'Is it vegan?', es: '¿Es vegano?', fr: 'Est-ce vegan ?', de: 'Ist es vegan?', pt: 'É vegano?', hi: 'क्या यह वीगन है?', ar: 'هل هو نباتي؟', zh: '是纯素的吗？', ja: 'ヴィーガン？', ru: 'Это веганское?' },
+                scanFirst: { en: 'Scan or search a product first, then ask me anything about it.', es: 'Escanea un producto primero, luego pregúntame.', fr: 'Scannez d’abord un produit, puis posez vos questions.', de: 'Scanne zuerst ein Produkt und frag mich dann.', pt: 'Escaneie um produto primeiro, depois me pergunte.', hi: 'पहले उत्पाद स्कैन करें, फिर मुझसे पूछें।', ar: 'امسح منتجًا أولاً ثم اسألني.', zh: '请先扫描一个产品，然后再问我。', ja: 'まず商品をスキャンしてから質問してください。', ru: 'Сначала отсканируйте продукт, затем спрашивайте.' },
+            };
+
+            function t(key) {
+                const l = state.lang;
+                return (I18N[key] && (I18N[key][l] || I18N[key].en)) || key;
+            }
+            function applyI18n() {
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    let raw = t(key);
+                    raw = raw.replace('{hl}', '<span class="hl">').replace('{/hl}', '</span>');
+                    el.innerHTML = raw;
+                });
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                    el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+                });
+                document.documentElement.lang = state.lang;
+                document.documentElement.dir = (state.lang === 'ar') ? 'rtl' : 'ltr';
+            }
+
+            /* ============================================================
+               2. STATE / PERSISTENCE
+               ============================================================ */
+            const state = {
+                lang: localStorage.getItem('fsai_lang') || (navigator.language || 'en').slice(0, 2),
+                theme: localStorage.getItem('fsai_theme') || 'light',
+                apiKey: 'netlify-function',
+                product: null,
+                warnings: [],
+            };
+            if (!LANGS.some(l => l.code === state.lang)) state.lang = 'en';
+
+            function applyTheme() {
+                document.documentElement.setAttribute('data-theme', state.theme);
+                document.querySelectorAll('[data-theme-choice]').forEach(b => {
+                    b.classList.toggle('active', b.dataset.themeChoice === state.theme);
+                });
+            }
+
+            /* ============================================================
+               3. ADDITIVES / ALLERGEN DATABASE (condensed)
+               ============================================================ */
+            const ADDITIVES = {
+                'E102': { name: 'Tartrazine', category: 'Artificial Color', concern: 'Linked to hyperactivity in children; banned in some countries' },
+                'E110': { name: 'Sunset Yellow', category: 'Artificial Color', concern: 'Potential hyperactivity link, may cause allergic reactions' },
+                'E122': { name: 'Carmoisine', category: 'Artificial Color', concern: 'Possible link to hyperactivity' },
+                'E124': { name: 'Ponceau 4R', category: 'Artificial Color', concern: 'Linked to hyperactivity; banned in some countries' },
+                'E129': { name: 'Allura Red', category: 'Artificial Color', concern: 'Possible hyperactivity link, allergic reactions' },
+                'E131': { name: 'Patent Blue V', category: 'Artificial Color', concern: 'May cause allergic reactions' },
+                'E133': { name: 'Brilliant Blue', category: 'Artificial Color', concern: 'Possible hyperactivity, allergic reactions' },
+                'E150d': { name: 'Caramel Colour (sulfite ammonia)', category: 'Artificial Color', concern: 'Contains 4-MEI, a possible carcinogen' },
+                'E171': { name: 'Titanium Dioxide', category: 'Additive', concern: 'Banned as food additive in the EU over genotoxicity concerns' },
+                'E211': { name: 'Sodium Benzoate', category: 'Preservative', concern: 'Can form benzene with vitamin C; possible hyperactivity link' },
+                'E220': { name: 'Sulphur Dioxide', category: 'Preservative', concern: 'Can trigger asthma and allergic reactions' },
+                'E221': { name: 'Sodium Sulphite', category: 'Preservative', concern: 'May trigger reactions in sulfite-sensitive people' },
+                'E249': { name: 'Potassium Nitrite', category: 'Preservative', concern: 'Can form nitrosamines, linked to cancer risk' },
+                'E250': { name: 'Sodium Nitrite', category: 'Preservative', concern: 'Can form nitrosamines, linked to cancer risk' },
+                'E251': { name: 'Sodium Nitrate', category: 'Preservative', concern: 'Converts to nitrite; cancer risk with processed meat' },
+                'E320': { name: 'BHA', category: 'Preservative', concern: 'Possible carcinogen, endocrine disruptor' },
+                'E321': { name: 'BHT', category: 'Preservative', concern: 'Possible endocrine disruptor' },
+                'E407': { name: 'Carrageenan', category: 'Thickener', concern: 'Linked to digestive inflammation in some studies' },
+                'E421': { name: 'Mannitol', category: 'Sweetener', concern: 'Can cause digestive discomfort in large amounts' },
+                'E433': { name: 'Polysorbate 80', category: 'Emulsifier', concern: 'May affect gut microbiome' },
+                'E466': { name: 'Carboxymethylcellulose', category: 'Thickener', concern: 'May affect gut microbiome' },
+                'E621': { name: 'Monosodium Glutamate (MSG)', category: 'Flavor Enhancer', concern: 'May cause reactions in sensitive individuals' },
+                'E951': { name: 'Aspartame', category: 'Artificial Sweetener', concern: 'Contains phenylalanine; unsafe for PKU; debated long-term safety' },
+                'E952': { name: 'Cyclamate', category: 'Artificial Sweetener', concern: 'Banned in the US; debated safety' },
+                'E954': { name: 'Saccharin', category: 'Artificial Sweetener', concern: 'Historically debated cancer link' },
+                'E955': { name: 'Sucralose', category: 'Artificial Sweetener', concern: 'May affect gut microbiome' },
+                'E1450': { name: 'Starch Sodium Octenyl Succinate', category: 'Emulsifier', concern: 'Generally recognized as safe, limited long-term data' },
+            };
+            const HARMFUL_KEYWORDS = ['partially hydrogenated', 'trans fat', 'high fructose corn syrup', 'palm oil'];
+
+            function analyzeAdditives(product) {
+                const warnings = [];
+                const tags = product.additives_tags || [];
+                tags.forEach(tagRaw => {
+                    const code = tagRaw.replace('en:', '').toUpperCase();
+                    const info = ADDITIVES[code];
+                    if (info && !warnings.some(w => w.code === code)) {
+                        warnings.push({ code, name: info.name, category: info.category, concern: info.concern });
+                    }
+                });
+                const text = (product.ingredients_text || '').toLowerCase();
+                HARMFUL_KEYWORDS.forEach(kw => {
+                    if (text.includes(kw) && !warnings.some(w => w.name.toLowerCase() === kw)) {
+                        let cat = 'Environmental Concern';
+                        if (kw.includes('trans') || kw.includes('hydrogenated')) cat = 'Trans Fat';
+                        warnings.push({
+                            code: null, name: kw.replace(/\b\w/g, c => c.toUpperCase()), category: cat,
+                            concern: kw.includes('palm') ? 'Linked to deforestation; high in saturated fat' : 'Linked to heart disease risk'
+                        });
+                    }
+                });
+                return warnings;
+            }
+
+            function detectAllergens(text) {
+                if (!text) return [];
+                const low = text.toLowerCase();
+                const groups = [
+                    { name: 'Gluten', kw: ['gluten', 'wheat', 'barley', 'rye', 'spelt', 'malt', 'semolina'] },
+                    { name: 'Milk/Dairy', kw: ['milk', 'dairy', 'lactose', 'casein', 'whey', 'cream', 'butter', 'cheese', 'yogurt'] },
+                    { name: 'Nuts', kw: ['almond', 'walnut', 'cashew', 'pecan', 'hazelnut', 'pistachio', 'macadamia'] },
+                    { name: 'Peanuts', kw: ['peanut', 'groundnut'] },
+                    { name: 'Soy', kw: ['soy', 'soya', 'soybean', 'tofu', 'edamame'] },
+                    { name: 'Eggs', kw: ['egg', 'albumin', 'mayonnaise'] },
+                    { name: 'Fish', kw: ['fish', 'anchovy', 'sardine', 'tuna', 'salmon', 'cod'] },
+                    { name: 'Shellfish', kw: ['shrimp', 'prawn', 'crab', 'lobster', 'mussel', 'oyster', 'clam'] },
+                    { name: 'Sesame', kw: ['sesame', 'tahini'] },
+                    { name: 'Sulphites', kw: ['sulphite', 'sulfite'] },
+                ];
+                const found = [];
+                groups.forEach(g => { if (g.kw.some(k => low.includes(k))) found.push(g.name); });
+                return found;
+            }
+
+            function highlightIngredients(text, warnings) {
+                if (!text) return '';
+                let out = escapeHtml(text);
+                const terms = warnings.map(w => w.name).filter(Boolean)
+                    .concat(HARMFUL_KEYWORDS.map(k => k.replace(/\b\w/g, c => c.toUpperCase())));
+                const unique = [...new Set(terms)].sort((a, b) => b.length - a.length);
+                unique.forEach(term => {
+                    const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const re = new RegExp('(' + esc + ')', 'gi');
+                    out = out.replace(re, '<mark>$1</mark>');
+                });
+                return out;
+            }
+            function escapeHtml(s) {
+                const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+                return String(s).replace(/[&<>"']/g, m => map[m]);
+            }
+
+            /* ============================================================
+               4. FETCH PRODUCT
+               ============================================================ */
+            function fetchProduct(barcode) {
+                showLoading();
+                const url = 'https://world.openfoodfacts.org/api/v2/product/' + encodeURIComponent(barcode) + '.json';
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 12000);
+                fetch(url, { signal: controller.signal })
+                    .then(r => r.json())
+                    .then(data => {
+                        clearTimeout(timeout);
+                        if (data.status === 1 && data.product) {
+                            state.product = data.product;
+                            state.warnings = analyzeAdditives(data.product);
+                            renderProduct(data.product, state.warnings);
+                            chatDot.style.display = 'block';
+                        } else {
+                            showNotFound(barcode);
+                        }
+                    })
+                    .catch(err => {
+                        clearTimeout(timeout);
+                        if (err.name === 'AbortError') showTimeoutError(); else showNetworkError();
+                    });
+            }
+
+            function showLoading() {
+                result.style.display = 'block';
+                productCard.innerHTML = '<div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i><div>' + t('scanning') + '</div></div>';
+            }
+            function showNotFound(barcode) {
+                productCard.innerHTML = '<div class="empty-state"><i class="fa-solid fa-box-open"></i><div>No product found for ' + escapeHtml(barcode) + '.</div></div>';
+            }
+            function showNetworkError() {
+                productCard.innerHTML = '<div class="empty-state"><i class="fa-solid fa-wifi"></i><div>Network error — check your connection and try again.</div></div>';
+            }
+            function showTimeoutError() {
+                productCard.innerHTML = '<div class="empty-state"><i class="fa-solid fa-clock"></i><div>The request timed out. Please try again.</div></div>';
+            }
+
+            /* ============================================================
+               5. RENDER PRODUCT
+               ============================================================ */
+            function healthScore(product, warnings) {
+                let score = 70;
+                const grade = (product.nutriscore_grade || '').toLowerCase();
+                const gradeMap = { a: 20, b: 10, c: 0, d: -15, e: -30 };
+                score += gradeMap[grade] || 0;
+                score -= warnings.length * 8;
+                score = Math.max(5, Math.min(98, score));
+                let color = 'var(--tomato)', label = 'Needs caution';
+                if (score >= 75) { color = 'var(--leaf)'; label = 'Good choice'; }
+                else if (score >= 50) { color = 'var(--citrus)'; label = 'Moderate'; }
+                return { score, color, label };
+            }
+
+            function renderProduct(product, warnings) {
+                const name = product.product_name || 'Unknown product';
+                const brand = product.brands || '';
+                const grade = (product.nutriscore_grade || '?').toUpperCase();
+                const gradeClass = 'ABCDE'.includes(grade) ? grade : 'Q';
+                const img = product.image_front_url || product.image_url || '';
+                const ingredientsText = product.ingredients_text || '';
+                const allergens = detectAllergens(ingredientsText);
+                const hs = healthScore(product, warnings);
+
+                const isVegetarian = product.vegetarian === 'yes' || (product.labels_tags || []).some(x => x.includes('vegetarian'));
+                const isVegan = product.vegan === 'yes' || (product.labels_tags || []).some(x => x.includes('vegan'));
+
+                let html = '';
+                html += '<div class="product-img">' + (img ? '<img src="' + img + '" alt="">' : '<i class="fa-solid fa-image noimg"></i>') + '</div>';
+                html += '<div class="p-head"><div><h2>' + escapeHtml(name) + '</h2>' + (brand ? '<div class="brand">' + escapeHtml(brand) + '</div>' : '') + '</div>';
+                html += '<button class="listen-btn" id="listenBtn" title="Listen to ingredients"><i class="fa-solid fa-volume-high"></i></button></div>';
+
+                html += '<div class="score-row">';
+                html += '<div class="score-pill"><span class="letter ' + gradeClass + '">' + grade + '</span> Nutri-Score</div>';
+                html += '</div>';
+
+                html += '<div class="health-ring"><div class="ring" style="background:' + hs.color + '">' + hs.score + '</div>';
+                html += '<div class="txt"><strong>' + hs.label + '</strong><span>Estimated health score, based on Nutri-Score and additives found</span></div></div>';
+
+                if (warnings.length) {
+                    html += '<div class="warn-box"><div class="wt"><i class="fa-solid fa-triangle-exclamation"></i> ' + warnings.length + ' concern(s) found</div>';
+                    warnings.forEach(w => {
+                        html += '<div class="warn-item">' + (w.code ? '<span class="code">' + w.code + '</span>' : '<span class="code">!</span>') +
+                            '<div><div>' + escapeHtml(w.name) + '</div><div class="concern">' + escapeHtml(w.concern) + '</div></div></div>';
+                    });
+                    html += '</div>';
+                } else {
+                    html += '<div class="warn-box safe"><div class="wt"><i class="fa-solid fa-circle-check"></i> No flagged additives detected</div></div>';
+                }
+
+                if (allergens.length) {
+                    html += '<div class="warn-box"><div class="wt"><i class="fa-solid fa-triangle-exclamation"></i> Possible allergens</div>';
+                    html += '<div class="tags">' + allergens.map(a => '<span class="tag">' + a + '</span>').join('') + '</div></div>';
+                }
+
+                if (ingredientsText) {
+                    html += '<div class="section-title">Ingredients</div>';
+                    html += '<div class="ingredients-box" id="ingredientsBox">' + highlightIngredients(ingredientsText, warnings) + '</div>';
+                }
+
+                const n = product.nutriments || {};
+                const rows = [
+                    ['Energy', n.energy_kcal_100g != null ? Math.round(n.energy_kcal_100g) + ' kcal' : 'N/A'],
+                    ['Fat', n.fat_100g != null ? n.fat_100g + ' g' : 'N/A'],
+                    ['Saturated fat', n.saturated_fat_100g != null ? n.saturated_fat_100g + ' g' : 'N/A'],
+                    ['Carbohydrates', n.carbohydrates_100g != null ? n.carbohydrates_100g + ' g' : 'N/A'],
+                    ['Sugars', n.sugars_100g != null ? n.sugars_100g + ' g' : 'N/A'],
+                    ['Fiber', n.fiber_100g != null ? n.fiber_100g + ' g' : 'N/A'],
+                    ['Protein', n.proteins_100g != null ? n.proteins_100g + ' g' : 'N/A'],
+                    ['Salt', n.salt_100g != null ? n.salt_100g + ' g' : 'N/A'],
+                ];
+                html += '<div class="section-title">Nutrition per 100g</div>';
+                html += '<table class="nutri"><thead><tr><th>Nutrient</th><th>Amount</th></tr></thead><tbody>';
+                rows.forEach(r => html += '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>');
+                html += '</tbody></table>';
+
+                html += '<div class="tags">';
+                if (isVegan) html += '<span class="tag veg">Vegan</span>';
+                else if (isVegetarian) html += '<span class="tag veg">Vegetarian</span>';
+                if (product.categories) html += '<span class="tag">' + escapeHtml(product.categories.split(',')[0]) + '</span>';
+                html += '</div>';
+
+                productCard.innerHTML = html;
+                result.style.display = 'block';
+
+                document.getElementById('listenBtn').addEventListener('click', () => speakIngredients(ingredientsText, name));
+            }
+
+            /* ============================================================
+               6. TEXT TO SPEECH
+               ============================================================ */
+            let speaking = false;
+            function speakIngredients(text, name) {
+                if (!('speechSynthesis' in window)) { alert('Speech is not supported in this browser.'); return; }
+                const btn = document.getElementById('listenBtn');
+                if (speaking) { window.speechSynthesis.cancel(); speaking = false; btn.classList.remove('speaking'); return; }
+                if (!text) { text = 'No ingredient information is available for ' + name + '.'; }
+                const utter = new SpeechSynthesisUtterance(text);
+                const langInfo = LANGS.find(l => l.code === state.lang) || LANGS[0];
+                utter.lang = langInfo.bcp;
+                const voices = window.speechSynthesis.getVoices();
+                const match = voices.find(v => v.lang && v.lang.startsWith(state.lang));
+                if (match) utter.voice = match;
+                utter.rate = 0.95;
+                utter.onend = () => { speaking = false; btn.classList.remove('speaking'); };
+                utter.onerror = () => { speaking = false; btn.classList.remove('speaking'); };
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utter);
+                speaking = true;
+                btn.classList.add('speaking');
+            }
+
+            /* ============================================================
+               7. RULE-BASED FALLBACK CHATBOT
+               ============================================================ */
+            function ruleBasedAnswer(question) {
+                const product = state.product, warnings = state.warnings;
+                if (!product) return t('scanFirst');
+                const q = question.toLowerCase();
+                const name = product.product_name || 'this product';
+
+                if (q.match(/healthy|good for me|nutri-?score/)) {
+                    const grade = (product.nutriscore_grade || '?').toUpperCase();
+                    if (warnings.length === 0 && 'AB'.includes(grade)) return name + ' looks like a solid choice — Nutri-Score ' + grade + ' and no flagged additives.';
+                    if (warnings.length > 0) return name + ' has Nutri-Score ' + grade + ' and ' + warnings.length + ' additive(s) worth knowing about: ' + warnings.map(w => w.name).join(', ') + '.';
+                    return name + ' has a Nutri-Score of ' + grade + '.';
+                }
+                if (q.match(/additive|harmful|e[- ]?number|chemical/)) {
+                    if (warnings.length === 0) return 'No flagged additives were detected in ' + name + '.';
+                    return 'Found ' + warnings.length + ' additive(s) of note: ' + warnings.map(w => w.name + ' (' + w.concern + ')').join('; ') + '.';
+                }
+                if (q.match(/allerg/)) {
+                    const a = detectAllergens(product.ingredients_text || '');
+                    if (a.length === 0) return 'No common allergens were detected in the ingredient list, but always check the label.';
+                    return 'Possible allergens detected: ' + a.join(', ') + '.';
+                }
+                if (q.match(/vegan|vegetarian|plant/)) {
+                    const isVegan = product.vegan === 'yes';
+                    const isVeg = product.vegetarian === 'yes';
+                    if (isVegan) return name + ' is labeled vegan.';
+                    if (isVeg) return name + ' is labeled vegetarian, but may not be vegan.';
+                    return "I couldn't confirm from the data whether " + name + ' is vegan or vegetarian — check the ingredient list for animal products.';
+                }
+                if (q.match(/nutrition|calorie|protein|fat|sugar|carb/)) {
+                    const n = product.nutriments || {};
+                    return 'Per 100g: ' + (n.energy_kcal_100g || '?') + ' kcal, ' + (n.proteins_100g || '?') + 'g protein, ' + (n.fat_100g || '?') + 'g fat, ' + (n.sugars_100g || '?') + 'g sugars.';
+                }
+                return "I can help with: is it healthy, additives, allergens, vegan status, or nutrition facts. Add a free AI key in Settings for open-ended questions in any language.";
+            }
+
+            /* ============================================================
+               8. REAL AI (Google Gemini)
+               ============================================================ */
+            async function askAI(userMessage) {
+                const product = state.product;
+                const langName = (LANGS.find(l => l.code === state.lang) || LANGS[0]).name;
+
+                let context = 'No product has been scanned yet.';
+                if (product) {
+                    const n = product.nutriments || {};
+                    context = JSON.stringify({
+                        name: product.product_name,
+                        brand: product.brands,
+                        nutriscore: product.nutriscore_grade,
+                        ingredients: product.ingredients_text,
+                        additives_flagged: state.warnings.map(w => ({ name: w.name, concern: w.concern })),
+                        allergens_detected: detectAllergens(product.ingredients_text || ''),
+                        nutrition_per_100g: {
+                            energy_kcal: n.energy_kcal_100g, protein: n.proteins_100g, fat: n.fat_100g,
+                            saturates: n.saturated_fat_100g, carbs: n.carbohydrates_100g, sugars: n.sugars_100g,
+                            fiber: n.fiber_100g, salt: n.salt_100g
+                        },
+                        vegan: product.vegan, vegetarian: product.vegetarian
+                    }, null, 0);
+                }
+
+                const systemInstruction =
+                    'You are FoodScore AI, a friendly, warm nutrition assistant inside a food-scanning app. ' +
+                    'Prefer the product JSON data given below as context; you may also use general nutrition ' +
+                    'knowledge, but never invent facts about THIS product that are not in the data. ' +
+                    'If a detail is missing, say so plainly. Keep answers short and useful (2-5 sentences). ' +
+                    'You may chat naturally and be personable. ' +
+                    'Always reply in this language: ' + langName + '. Product data: ' + context;
+
+                // Try these models in order until one answers
+                // Note: 'gemini-flash-latest' often points to a preview; the others are stable releases.
+                const MODELS = ['gemini-2.5-flash', 'gemini-3.5-flash', 'gemini-flash-latest'];
+
+                async function callModel(model, genConfig) {
+                    const body = {
+                        model: model,
+                        systemInstruction: { parts: [{ text: systemInstruction }] },
+                        contents: [{ role: 'user', parts: [{ text: userMessage }] }],
+                        generationConfig: genConfig
+                    };
+                    const res = await fetch('/.netlify/functions/gemini', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                    if (!res.ok) {
+                        const errText = await res.text().catch(() => '');
+                        throw new Error(model + ' → ' + res.status + ' ' + errText.slice(0, 160));
+                    }
+                    const data = await res.json();
+                    const cand = data && data.candidates && data.candidates[0];
+                    const text = (cand && cand.content && cand.content.parts)
+                        ? cand.content.parts.map(p => p.text || '').join('').trim()
+                        : '';
+                    return { text, finishReason: cand && cand.finishReason };
+                }
+
+                let lastErr = null;
+
+                for (const model of MODELS) {
+                    // Attempt A: thinking OFF  (fast, no wasted tokens)
+                    // Attempt B: thinking default, much bigger budget
+                    const configs = [
+                        { temperature: 0.4, maxOutputTokens: 2048, thinkingConfig: { thinkingBudget: 0 } },
+                        { temperature: 0.4, maxOutputTokens: 4096 }
+                    ];
+                    for (const cfg of configs) {
+                        try {
+                            const out = await callModel(model, cfg);
+                            if (out.text && out.finishReason !== 'MAX_TOKENS') {
+                                return out.text;                     // ✅ good, complete answer
+                            }
+                            lastErr = new Error(model + ' returned an incomplete response.');
+                        } catch (e) {
+                            lastErr = e;                            // try the next config / model
+                        }
+                    }
+                }
+                throw lastErr || new Error('AI request failed.');
+            }
+
+            /* ============================================================
+               9. CHAT UI
+               ============================================================ */
+            function addMsg(text, who) {
+                const div = document.createElement('div');
+                div.className = 'msg ' + who;
+                div.textContent = text;
+                chatBody.appendChild(div);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+            function addTyping() {
+                const div = document.createElement('div');
+                div.className = 'typing';
+                div.id = 'typingIndicator';
+                div.innerHTML = '<span></span><span></span><span></span>';
+                chatBody.appendChild(div);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+            function removeTyping() {
+                const el = document.getElementById('typingIndicator');
+                if (el) el.remove();
+            }
+            async function sendMessage() {
+                const text = chatInput.value.trim();
+                if (!text) return;
+                addMsg(text, 'user');
+                chatInput.value = '';
+                addTyping();
+                try {
+                    let reply;
+                    if (state.apiKey) {
+                        reply = await askAI(text);
+                    } else {
+                        await new Promise(r => setTimeout(r, 350));
+                        reply = ruleBasedAnswer(text);
+                    }
+                    removeTyping();
+                    addMsg(reply, 'bot');
+                } catch (err) {
+                    removeTyping();
+                    addMsg('Sorry — the AI request failed (' + err.message + '). Falling back to offline mode: ' + ruleBasedAnswer(text), 'bot');
+                }
+            }
+            function renderSuggestions() {
+                chatSuggest.innerHTML = '';
+                [t('askHealthy'), t('askAdditives'), t('askVegan')].forEach(q => {
+                    const b = document.createElement('button');
+                    b.textContent = q;
+                    b.addEventListener('click', () => { chatInput.value = q; sendMessage(); });
+                    chatSuggest.appendChild(b);
+                });
+            }
+            function updateChatModeLabel() {
+                chatModeLabel.textContent = state.apiKey ? t('chatOnline') : t('chatOffline');
+            }
+
+            /* ============================================================
+               10. CAMERA SCANNING (Quagga)
+               ============================================================ */
+            let scannerRunning = false;
+            let lastCode = '';
+            let lastCodeTime = 0;
+
+            function startScanner() {
+                cameraWrap.style.display = 'block';
+                camActions.classList.remove('hidden');
+                scanStatus.classList.add('on');
+                startScanBtn.classList.add('hidden');
+
+                // Mobile browsers require HTTPS (or localhost) for camera access
+                const isSecure = location.protocol === 'https:' ||
+                    location.hostname === 'localhost' ||
+                    location.hostname === '127.0.0.1';
+                if (!isSecure) {
+                    alert('Camera needs HTTPS. On mobile, please open this page over https:// (or use localhost on desktop).');
+                    stopScanner();
+                    return;
+                }
+
+                Quagga.init({
+                    inputStream: {
+                        name: 'Live',
+                        type: 'LiveStream',
+                        target: cameraWrap,                    // ← the CONTAINER, not a <video>
+                        constraints: {
+                            facingMode: { ideal: 'environment' }, // rear camera on phones
+                            width: { min: 640, ideal: 1280 },
+                            height: { min: 480, ideal: 720 }
+                        },
+                        area: {                                 // restrict scanning to the visible frame
+                            top: '30%', right: '10%', left: '10%', bottom: '30%'
+                        }
+                    },
+                    locator: {
+                        patchSize: 'medium',
+                        halfSample: true
+                    },
+                    numOfWorkers: Math.min(4, navigator.hardwareConcurrency || 2),
+                    frequency: 10,
+                    decoder: {
+                        readers: [
+                            'ean_reader', 'ean_8_reader',
+                            'upc_reader', 'upc_e_reader',
+                            'code_128_reader'
+                        ]
+                    },
+                    locate: true
+                }, function (err) {
+                    if (err) {
+                        console.error('Quagga init error:', err);
+                        alert('Camera error: ' + (err.message || err));
+                        stopScanner();
+                        return;
+                    }
+                    Quagga.start();
+                    scannerRunning = true;
+                });
+
+                Quagga.onDetected(function (result) {
+                    const code = result && result.codeResult && result.codeResult.code;
+                    if (!code || code.length < 8) return;
+
+                    // Debounce: same code within 1.5 s is a repeat of the same frame
+                    const now = Date.now();
+                    if (code === lastCode && now - lastCodeTime < 1500) return;
+                    lastCode = code;
+                    lastCodeTime = now;
+
+                    stopScanner();
+                    barcodeInput.value = code;
+                    fetchProduct(code);
+                });
+            }
+
+            function stopScanner() {
+                try {
+                    if (scannerRunning) { Quagga.stop(); }
+                    if (Quagga.offDetected) Quagga.offDetected();
+                } catch (e) { /* ignore */ }
+                scannerRunning = false;
+
+                cameraWrap.style.display = 'none';
+                camActions.classList.add('hidden');
+                scanStatus.classList.remove('on');
+                startScanBtn.classList.remove('hidden');
+
+                // Clean out Quagga's injected <video> / <canvas> so restart works next time
+                cameraWrap.querySelectorAll('video, canvas').forEach(el => el.remove());
+            }
+
+            /* ============================================================
+               11. DOM WIRING
+               ============================================================ */
+            const result = document.getElementById('result');
+            const productCard = document.getElementById('productCard');
+            const barcodeInput = document.getElementById('barcodeInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const manualArea = document.getElementById('manualArea');
+            const scanArea = document.getElementById('scanArea');
+            const startScanBtn = document.getElementById('startScanBtn');
+            const stopScanBtn = document.getElementById('stopScanBtn');
+            const cameraWrap = document.getElementById('cameraWrap');
+            // const video = document.getElementById('video');
+            const scanStatus = document.getElementById('scanStatus');
+            const camActions = document.getElementById('camActions');
+
+            const settingsBtn = document.getElementById('settingsBtn');
+            const settingsPanel = document.getElementById('settingsPanel');
+            const overlay = document.getElementById('overlay');
+            const closeSettings = document.getElementById('closeSettings');
+            const langSelect = document.getElementById('langSelect');
+            const apiKeyInput = document.getElementById('apiKeyInput');
+            const saveKeyBtn = document.getElementById('saveKeyBtn');
+            const clearKeyBtn = document.getElementById('clearKeyBtn');
+            const keyStatus = document.getElementById('keyStatus');
+
+            const chatFab = document.getElementById('chatFab');
+            const chatDot = document.getElementById('chatDot');
+            const chatPanel = document.getElementById('chatPanel');
+            const chatClose = document.getElementById('chatClose');
+            const chatBody = document.getElementById('chatBody');
+            const chatInput = document.getElementById('chatInput');
+            const chatSend = document.getElementById('chatSend');
+            const chatSuggest = document.getElementById('chatSuggest');
+            const chatModeLabel = document.getElementById('chatModeLabel');
+
+            document.querySelectorAll('.seg button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.seg button').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    if (btn.dataset.mode === 'manual') { manualArea.classList.remove('hidden'); scanArea.classList.add('hidden'); stopScanner(); }
+                    else { manualArea.classList.add('hidden'); scanArea.classList.remove('hidden'); }
+                });
+            });
+            searchBtn.addEventListener('click', () => {
+                const code = barcodeInput.value.trim();
+                if (code) fetchProduct(code);
+            });
+            barcodeInput.addEventListener('keydown', e => { if (e.key === 'Enter') searchBtn.click(); });
+            startScanBtn.addEventListener('click', startScanner);
+            stopScanBtn.addEventListener('click', stopScanner);
+
+            settingsBtn.addEventListener('click', () => { settingsPanel.classList.add('show'); overlay.classList.add('show'); });
+            closeSettings.addEventListener('click', closeSettingsPanel);
+            overlay.addEventListener('click', closeSettingsPanel);
+            function closeSettingsPanel() { settingsPanel.classList.remove('show'); overlay.classList.remove('show'); }
+
+            document.querySelectorAll('[data-theme-choice]').forEach(b => {
+                b.addEventListener('click', () => {
+                    state.theme = b.dataset.themeChoice;
+                    localStorage.setItem('fsai_theme', state.theme);
+                    applyTheme();
+                });
+            });
+
+            LANGS.forEach(l => {
+                const opt = document.createElement('option');
+                opt.value = l.code; opt.textContent = l.name;
+                langSelect.appendChild(opt);
+            });
+            langSelect.value = state.lang;
+            langSelect.addEventListener('change', () => {
+                state.lang = langSelect.value;
+                localStorage.setItem('fsai_lang', state.lang);
+                applyI18n();
+                renderSuggestions();
+                updateChatModeLabel();
+                if (state.product) renderProduct(state.product, state.warnings);
+            });
+
+            function refreshKeyStatus() {
+                if (state.apiKey) { keyStatus.textContent = t('keyOn'); keyStatus.className = 'key-status ok'; }
+                else { keyStatus.textContent = t('keyOff'); keyStatus.className = 'key-status off'; }
+                updateChatModeLabel();
+            }
+            saveKeyBtn.addEventListener('click', () => {
+                const val = apiKeyInput.value.trim();
+                if (val) {
+                    state.apiKey = val;
+                    localStorage.setItem('fsai_gemini_key', val);
+                    refreshKeyStatus();
+                }
+            });
+            clearKeyBtn.addEventListener('click', () => {
+                state.apiKey = '';
+                apiKeyInput.value = '';
+                localStorage.removeItem('fsai_gemini_key');
+                refreshKeyStatus();
+            });
+            apiKeyInput.value = state.apiKey;
+
+            chatFab.addEventListener('click', () => { chatPanel.classList.add('show'); chatDot.style.display = 'none'; });
+            chatClose.addEventListener('click', () => chatPanel.classList.remove('show'));
+            chatSend.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+
+            window.addEventListener('beforeunload', stopScanner);
+
+            /* ============================================================
+               12. INIT
+               ============================================================ */
+            applyTheme();
+            applyI18n();
+            renderSuggestions();
+            refreshKeyStatus();
+            addMsg(t('chatIntro'), 'bot');
+            chatDot.style.display = 'none';
+
+        })();
+    </script>
+</body>
+
+</html>
