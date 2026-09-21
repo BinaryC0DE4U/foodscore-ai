@@ -1988,9 +1988,14 @@
                     'You may chat naturally and be personable. ' +
                     'Always reply in this language: ' + langName + '. Product data: ' + context;
 
-                // Try these models in order until one answers
-                // Note: 'gemini-flash-latest' often points to a preview; the others are stable releases.
-                const MODELS = ['gemini-2.5-flash', 'gemini-3.5-flash', 'gemini-flash-latest'];
+                // Order matters: try the cheapest / highest-quota models first.
+                // Flash-Lite variants have the most generous free-tier limits.
+                const MODELS = [
+                    'gemini-2.0-flash-lite',
+                    'gemini-2.5-flash-lite',
+                    'gemini-2.5-flash',
+                    'gemini-flash-latest'
+                ];
 
                 async function callModel(model, genConfig) {
                     const body = {
@@ -2080,7 +2085,24 @@
                     addMsg(reply, 'bot');
                 } catch (err) {
                     removeTyping();
-                    addMsg('Sorry — the AI request failed (' + err.message + '). Falling back to offline mode: ' + ruleBasedAnswer(text), 'bot');
+
+                    const msg = String((err && err.message) || '');
+                    const isQuota = msg.includes('429') || /quota|rate/i.test(msg);
+                    const isBusy = msg.includes('503') || /overload|unavailable/i.test(msg);
+                    const isTimeout = err.name === 'AbortError' || /timeout/i.test(msg);
+
+                    if (isQuota || isBusy || isTimeout) {
+                        // Silent fallback — user gets a normal reply, no scary JSON
+                        console.warn('[FoodScore AI] falling back to offline:', msg);
+                        addMsg(ruleBasedAnswer(text), 'bot');
+
+                        // Show a small "offline" tag in the chat header so it's clear
+                        if (chatModeLabel) chatModeLabel.textContent = t('chatOffline');
+                    } else {
+                        // Unknown error — log it, still fall back gracefully
+                        console.warn('[FoodScore AI] unexpected error:', err);
+                        addMsg(ruleBasedAnswer(text), 'bot');
+                    }
                 }
             }
             function renderSuggestions() {
