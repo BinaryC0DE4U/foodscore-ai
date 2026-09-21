@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FoodScore AI · Know what you eat</title>
-    <link rel="icon"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23163C2C'/%3E%3Cpath d='M32 14c9 0 15 7 15 16s-7 18-15 18-15-9-15-18 6-16 15-16z' fill='%234C9A63'/%3E%3Cpath d='M32 10c2 3 2 6-1 9' stroke='%23163C2C' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+    <title>FoodScore AI</title>
+    <link rel="icon" href="svg/logo.png" type="image/x-icon">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link
         href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap"
@@ -468,6 +468,13 @@
         .brand-mark svg {
             width: 22px;
             height: 22px;
+        }
+
+        .brand-logo {
+            height: 38px;
+            width: auto;
+            border-radius: 11px;
+            object-fit: contain;
         }
 
         .brand-name {
@@ -1445,12 +1452,9 @@
 
     <div class="topbar">
         <a class="brand" href="#">
-            <span class="brand-mark">
-                <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M12 3c5 0 8 4 8 9s-4 10-8 10-8-5-8-10 3-9 8-9z" fill="#fff" />
-                    <path d="M12 1c1.2 1.7 1.2 3.3-.5 5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" />
-                </svg>
-            </span>
+            <!-- The Logo Image -->
+            <img src="svg/logo.png" alt="FoodScore AI Logo" class="brand-logo">
+            <!-- The Text -->
             <span class="brand-name">FoodScore <em>AI</em></span>
         </a>
         <div class="top-actions">
